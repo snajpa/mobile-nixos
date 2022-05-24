@@ -1,5 +1,4 @@
-#!/usr/bin/env nix-shell
-#!nix-shell -p ruby -i ruby
+#!/usr/bin/nix-shell -p ruby -i ruby
 
 require "shellwords"
 ROOT = File.join(__dir__, "..")

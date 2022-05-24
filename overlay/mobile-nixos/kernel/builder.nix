@@ -23,6 +23,7 @@
 , writeShellScript
 , writeShellScriptBin
 
+, flock
 , perl
 , bc
 , nettools
@@ -100,6 +101,9 @@ in
 
 # Enable build of dtbo.img
 , dtboImg ? false
+
+# Enable build of Image.gz-dtb via cat with this dtb file:
+, makeImageDtbWith ? null
 
 # Linux logo centering (as a boot logo)
 , enableCenteredLinuxLogo ? true
@@ -193,7 +197,7 @@ stdenv.mkDerivation (inputArgs // {
   updateConfigFromStructuredConfig = false;
 
   depsBuildBuild = [ buildPackages.stdenv.cc ];
-  nativeBuildInputs = [ perl bc nettools openssl rsync gmp libmpc mpfr ]
+  nativeBuildInputs = [ perl bc nettools openssl rsync gmp libmpc mpfr flock ]
     ++ optional (platform.linux-kernel.target == "uImage") buildPackages.ubootTools
     ++ optional (lib.versionAtLeast version "4.14" && lib.versionOlder version "5.8") libelf
     ++ optional (lib.versionAtLeast version "4.15") utillinux
@@ -463,6 +467,14 @@ stdenv.mkDerivation (inputArgs // {
    mkdtboimg.py create \
      $out/dtbo.img \
      $(find $buildRoot/arch/*/boot/dts/ -iname '*.dtbo' | sort)
+
+  '' + optionalString isModular ''
+    echo ":: Installing modules"
+    make $makeFlags "''${makeFlagsArray[@]}" modules_install
+
+  '' + optionalString (makeImageDtbWith != null) ''
+   echo ":: Building Image.gz-dtb"
+   cat "$out/${kernelTarget}" "$out/dtbs/${makeImageDtbWith}" > "$out/${kernelTarget}-dtb"
   ''
     + maybeString postInstall
   ;
@@ -508,7 +520,7 @@ stdenv.mkDerivation (inputArgs // {
     kernelAtLeast = lib.versionAtLeast baseVersion;
 
     # Used by consumers to refer to the kernel build product.
-    file = kernelTarget + optionalString isImageGzDtb "-dtb";
+    file = kernelTarget + optionalString (isImageGzDtb || (makeImageDtbWith != null)) "-dtb";
 
     # Derivation with the as-built normalized kernel config
     normalizedConfig = kernelDerivation.overrideAttrs({ ... }: {

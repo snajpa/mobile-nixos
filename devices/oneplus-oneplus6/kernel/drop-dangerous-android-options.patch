@@ -1,0 +1,54 @@
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 20ea89d9ac2f..84b534d69567 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -2095,6 +2095,23 @@ config CMDLINE_FORCE
+ 
+ endchoice
+ 
++config CMDLINE_DROP_DANGEROUS_ANDROID_OPTIONS
++	bool "Drop certain dangerous options from cmdline"
++	default y
++	help
++	  Android bootloader passes some arguments in kernel command
++	  line, that make booting custom OSes harder:
++
++	    * skip_initramfs
++	    * root=PARTUUID=...
++	    * init=/init
++
++	  Those parameters override default boot partition to hardcoded,
++	  set init binary to /init, disable booting from initramfs.
++
++	  If enabled, those parameters will be erased from bootloader's
++	  command line, and custom OS can boot the way it likes.
++
+ config EFI_STUB
+ 	bool
+ 
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index ec315b060cd5..20ca9e662416 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -1183,6 +1183,21 @@ int __init early_init_dt_scan_chosen(char *cmdline)
+ 
+ 	pr_debug("Command line is: %s\n", (char *)cmdline);
+ 
++#ifdef CONFIG_CMDLINE_DROP_DANGEROUS_ANDROID_OPTIONS
++	char *tmpstr;
++	pr_err("Replacing dangerous tmpstr options...");
++	tmpstr = strstr((const char *)cmdline, "skip_initramfs");
++	if (tmpstr)
++		*tmpstr = '_';
++	tmpstr = strstr((const char *)cmdline, "root=");
++	if (tmpstr)
++		*tmpstr = '_';
++	tmpstr = strstr((const char *)cmdline, "init=");
++	if (tmpstr)
++		*tmpstr = '_';
++	pr_err("Command line now is: %s\n", (char*)cmdline);
++#endif
++
+ 	rng_seed = of_get_flat_dt_prop(node, "rng-seed", &l);
+ 	if (rng_seed && l > 0) {
+ 		add_bootloader_randomness(rng_seed, l);
