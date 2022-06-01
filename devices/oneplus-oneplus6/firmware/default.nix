@@ -24,7 +24,6 @@ stdenv.mkDerivation rec {
   '';
 
   installPhase = ''
-    set -x
     mkdir -p $out/lib/firmware
     mkdir -p $forPdMapper
     find . -name \*.jsn -type f -exec cp \{} $forPdMapper/ \;
