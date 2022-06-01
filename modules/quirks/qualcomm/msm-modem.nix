@@ -5,16 +5,35 @@ let
   inherit (lib) mkIf mkOption types;
 in
 {
-  options.mobile = {
-    quirks.qualcomm.msm-modem.enable = mkOption {
+  options.mobile.quirks.qualcomm.msm-modem = {
+    enable = mkOption {
       type = types.bool;
       default = false;
       description = ''
         Enable this on a mainline-based SDM845 device for modem support
       '';
     };
+    firmwareForPdMapper = mkOption {
+      type = types.package;
+      default = pkgs.pd-mapper;
+      description = ''
+        Enable this on a mainline-based SDM845 device for modem support
+      '';
+    };
   };
   config = mkIf (cfg.msm-modem.enable) {
+    nixpkgs.overlays = [(self: super: {
+      libqmi = super.libqmi.overrideDerivation (super: {
+          configureFlags = super.configureFlags ++ [
+            "--enable-qrtr"
+          ];
+      });
+      modemmanager = super.modemmanager.overrideDerivation (super: {
+        configureFlags = super.configureFlags ++ [
+          "--enable-plugin-qcom-soc"
+        ];
+      });
+    })];
     systemd.services = {
       rmtfs = {
         wantedBy = [ "multi-user.target" ];

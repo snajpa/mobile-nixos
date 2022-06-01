@@ -1655,10 +1655,9 @@ CONFIG_PREVENT_FIRMWARE_BUILD=y
 # Firmware loader
 #
 CONFIG_FW_LOADER=y
-CONFIG_EXTRA_FIRMWARE="ath10k/WCN3990/hw1.0/board-2.bin qcom/sdm845/oneplus6/ipa_fws.mbn qca/crbtfw21.tlv qcom/sdm845/oneplus6/ipa_fws.mbn qca/oneplus6/crnv21.bin qcom/sdm845/oneplus6/mba.mbn qcom/a630_gmu.bin qcom/a630_sqe.fw qcom/sdm845/oneplus6/a630_zap.mbn qcom/sdm845/oneplus6/modemuw.jsn qcom/sdm845/oneplus6/adsp.mbn qcom/sdm845/oneplus6/slpi.mbn qcom/sdm845/oneplus6/adsp.mbn qcom/sdm845/oneplus6/slpi.mbn qcom/sdm845/oneplus6/adsp.mbn qcom/sdm845/oneplus6/slpi.mbn qcom/sdm845/oneplus6/adspr.jsn qcom/sdm845/oneplus6/slpir.jsn qcom/sdm845/oneplus6/adspua.jsn qcom/sdm845/oneplus6/slpius.jsn qcom/sdm845/oneplus6/cdsp.mbn qcom/sdm845/oneplus6/venus.mbn qcom/sdm845/oneplus6/cdsp.mbn qcom/sdm845/oneplus6/wlanmdsp.mbn qcom/sdm845/oneplus6/cdsp.mbn qcom/sdm845/oneplus6/cdspr.jsn regulatory.db.p7s regulatory.db"
-CONFIG_EXTRA_FIRMWARE_DIR="firmware/"
 # CONFIG_FW_LOADER_USER_HELPER is not set
-# CONFIG_FW_LOADER_COMPRESS is not set
+CONFIG_FW_LOADER_COMPRESS=y
+CONFIG_FW_LOADER_PAGED_BUF=y
 CONFIG_FW_CACHE=y
 # end of Firmware loader
 

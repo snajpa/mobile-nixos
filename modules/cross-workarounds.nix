@@ -16,7 +16,18 @@ lib.mkIf isCross (lib.mkMerge [
 
 # All cross-compilation
 {
-  # No workarounds needed!
+  nixpkgs.overlays = [(self: super: {
+    libqmi = super.libqmi.overrideDerivation (super: {
+      configureFlags = super.configureFlags ++ [
+        "--enable-qrtr" "--disable-gtk-doc" "--enable-introspection=no"
+      ];
+    });
+    libqrtr-glib = super.libqrtr-glib.overrideDerivation (super: {
+      configureFlags = super.configureFlags ++ [
+        "--disable-gtk-doc" "--enable-introspection=no"
+      ];
+    });
+  })];
 }
 
 # 32 bit ARM

@@ -11,7 +11,9 @@ config = {
   #imports = [
   #  (import <mobile-nixos/lib/configuration.nix> { device = "oneplus-oneplus6"; })
   #];
+
   system.stateVersion = "22.05";
+
   users.users."root".openssh.authorizedKeys.keys = [
     "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBK29/yHdxakVaJMYiIMBKb8nYGaj/gSQI4zErNVcbvsUpSiQuD+TLhIWYxR79D9rHFypMRm6aaEbeMHtw+TRjoI= snajpa@snajpaStation"
   ];
@@ -22,13 +24,14 @@ config = {
       "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBK29/yHdxakVaJMYiIMBKb8nYGaj/gSQI4zErNVcbvsUpSiQuD+TLhIWYxR79D9rHFypMRm6aaEbeMHtw+TRjoI= snajpa@snajpaStation"
     ];
   };
-  services.openssh.enable = true;
-  services.openssh.permitRootLogin = "yes";
   security.sudo.extraRules = [
     { users = [ defaultUserName ];
       commands = [ { command = "ALL" ; options= [ "NOPASSWD" ]; } ];
     }
   ];
+
+  services.openssh.enable = true;
+  services.openssh.permitRootLogin = "yes";
 
   time.timeZone = "Europe/Prague";
   networking.hostName = "${defaultUserName}Phone";
@@ -43,16 +46,12 @@ config = {
   nix.buildMachines = [ {
    hostName = "build.snajpa.net";
    system = "aarch64-linux";
-   # if the builder supports building for multiple architectures,
-   # replace the previous line by, e.g.,
-   # systems = ["x86_64-linux" "aarch64-linux"];
    maxJobs = 8;
    speedFactor = 10;
    supportedFeatures = [ "nixos-test" "benchmark" "big-parallel" "kvm" ];
    mandatoryFeatures = [ ];
   }] ;
   nix.distributedBuilds = true;
-  # optional, useful when the builder has a faster internet connection than yours
   nix.extraOptions = ''
         builders-use-substitutes = true
   '';
@@ -70,6 +69,7 @@ config = {
   #  gdm.enable = true;
   #  autoLogin.enable = true;
   #  autoLogin.user = defaultUserName;
+  #  defaultSession = "phosh";
   #};
   #services.xserver.desktopManager.gnome.enable = true;
   #services.xserver.desktopManager.phosh = {

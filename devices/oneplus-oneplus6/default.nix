@@ -1,13 +1,14 @@
 { config, pkgs, lib, ... }:
 
+let
+  oneplus-sdm845-firmware = pkgs.callPackage ./firmware { };
+in
 {
   mobile.device.name = "oneplus-oneplus6";
   mobile.device.identity = {
     name = "Enchilada";
     manufacturer = "OnePlus";
   };
-
-  hardware.firmware = [ pkgs.oneplus-sdm845-firmware ];
   mobile.hardware = {
     soc = "qualcomm-sdm845";
     ram = 1024 * 8;
@@ -15,7 +16,10 @@
       width = 1080; height = 2280;
     };
   };
+  mobile.device.firmware = oneplus-sdm845-firmware;
+  hardware.firmware = [ oneplus-sdm845-firmware ];
   mobile.quirks.qualcomm.msm-modem.enable = true;
+  mobile.quirks.qualcomm.msm-modem.firmwareForPdMapper = oneplus-sdm845-firmware.forPdMapper;
 
   mobile.boot.stage-1 = {
     kernel.package = pkgs.callPackage ./kernel { };

@@ -80,22 +80,6 @@ in
     }) # See all-packages.nix for more about this messy composition :/
     // { inherit (self) xlibsWrapper; };
 
-    modemmanager = super.modemmanager.overrideDerivation (super: {
-      configureFlags = super.configureFlags ++ [
-        "--enable-plugin-qcom-soc"
-      ];
-    });
-    libqmi = super.libqmi.overrideDerivation (super: {
-      configureFlags = super.configureFlags ++ [
-        "--enable-qrtr" #"--disable-gtk-doc" "--enable-introspection=no"
-      ];
-    });
-    #libqrtr-glib = super.libqrtr-glib.overrideDerivation (super: {
-    #  configureFlags = super.configureFlags ++ [
-    #    "--disable-gtk-doc" "--enable-introspection=no"
-    #  ];
-    #});
-
     #
     # Fixes to upstream
     # -----------------
@@ -169,7 +153,4 @@ in
     };
 
     imageBuilder = callPackage ../lib/image-builder {};
-
-    # need to use oneplus 6 firmware during kernel build to build it in
-    oneplus-sdm845-firmware = callPackage ../devices/oneplus-oneplus6/firmware {};
  }

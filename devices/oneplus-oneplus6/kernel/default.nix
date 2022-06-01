@@ -18,18 +18,6 @@ mobile-nixos.kernel-builder {
 
   patches = [ ./drop-dangerous-android-options.patch ];
 
-  buildInputs = [ linux-firmware oneplus-sdm845-firmware wireless-regdb ];
-
-  postPatch = ''
-    mkdir -p firmware/qcom
-    cp ${linux-firmware}/lib/firmware/qcom/a630_gmu.bin firmware/qcom/
-    cp ${linux-firmware}/lib/firmware/qcom/a630_sqe.fw  firmware/qcom/
-    cp ${wireless-regdb}/lib/firmware/regulatory.db     firmware/
-    cp ${wireless-regdb}/lib/firmware/regulatory.db.p7s firmware/
-    cp -vr ${oneplus-sdm845-firmware}/lib/firmware      .
-  '';
-
   makeImageDtbWith = "qcom/sdm845-oneplus-enchilada.dtb";
   isCompressed = "gz";
-  isModular = true;
 }

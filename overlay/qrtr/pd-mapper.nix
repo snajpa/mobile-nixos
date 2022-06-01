@@ -1,21 +1,23 @@
-{ stdenv, lib, fetchFromGitHub, qrtr }:
+{ stdenv, lib, fetchFromGitHub, qrtr, firmwareForPdMapper ? null }:
+
+with lib;
 
 stdenv.mkDerivation {
-	pname = "pd-mapper";
-	version = "unstable-2020-10-22";
+  pname = "pd-mapper";
+  version = "unstable-2020-10-22";
+  
+  buildInputs = [ qrtr ];
+  
+  src = fetchFromGitHub {
+    owner = "andersson";
+    repo = "pd-mapper";
+    rev = "d7fe25fa6eff2e62cf264544adee9e8ca830dc78";
+    hash = "sha256-jTtZN95YzqxhBr4SYCxbkrEnmy/Y/ox3MDKS8pelMlE=";
+  };
 
-	buildInputs = [ qrtr ];
-
-	src = fetchFromGitHub {
-		owner = "andersson";
-		repo = "pd-mapper";
-		rev = "d7fe25fa6eff2e62cf264544adee9e8ca830dc78";
-		hash = "sha256-jTtZN95YzqxhBr4SYCxbkrEnmy/Y/ox3MDKS8pelMlE=";
-	};
-
-  patches = [
-    ./pd-mapper-firmware-path.diff
-  ];
+  postPatch = optionalString (firmwareForPdMapper != null ) ''
+    substituteInPlace ./pd-mapper.c --replace "#define FIRMWARE_BASE   \"/lib/firmware/\"" "#define FIRMWARE_BASE      \"${firmwareForPdMapper}/\""
+  '';
 
   installFlags = [ "prefix=$(out)" ];
 
