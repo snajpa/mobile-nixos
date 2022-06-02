@@ -23,6 +23,7 @@ in
 
   mobile.boot.stage-1 = {
     kernel.package = pkgs.callPackage ./kernel { };
+    firmware = [ config.hardware.firmware ];
   };
 
   mobile.system.vendor.partition = "/dev/disk/by-partlabel/vendor_a";
