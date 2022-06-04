@@ -4,7 +4,7 @@ with lib;
 
 stdenv.mkDerivation {
   pname = "pd-mapper";
-  version = "unstable-2020-10-22";
+  version = "unstable-2020-10-25";
   
   buildInputs = [ qrtr ];
   
@@ -16,7 +16,7 @@ stdenv.mkDerivation {
   };
 
   postPatch = optionalString (firmwareForPdMapper != null ) ''
-    substituteInPlace ./pd-mapper.c --replace "#define FIRMWARE_BASE   \"/lib/firmware/\"" "#define FIRMWARE_BASE      \"${firmwareForPdMapper}/\""
+    substituteInPlace ./pd-mapper.c --replace "/lib/firmware/" "${firmwareForPdMapper}/" || exit 1
   '';
 
   installFlags = [ "prefix=$(out)" ];

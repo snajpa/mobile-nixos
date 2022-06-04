@@ -1,8 +1,10 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.mobile.quirks.qualcomm;
+  cfg = config.mobile.quirks.qualcomm.msm-modem;
   inherit (lib) mkIf mkOption types;
+
+  pd-mapper = pkgs.callPackage ../../../overlay/qrtr/pd-mapper.nix { firmwareForPdMapper = cfg.firmwareForPdMapper; };
 in
 {
   options.mobile.quirks.qualcomm.msm-modem = {
@@ -15,13 +17,13 @@ in
     };
     firmwareForPdMapper = mkOption {
       type = types.package;
-      default = pkgs.pd-mapper;
+      default = null;
       description = ''
         Enable this on a mainline-based SDM845 device for modem support
       '';
     };
   };
-  config = mkIf (cfg.msm-modem.enable) {
+  config = mkIf (cfg.enable) {
     nixpkgs.overlays = [(self: super: {
       libqmi = super.libqmi.overrideDerivation (super: {
           configureFlags = super.configureFlags ++ [
@@ -65,7 +67,7 @@ in
         requires = [ "qrtr-ns.service" ];
         after = [ "qrtr-ns.service" ];
         serviceConfig = {
-          ExecStart = "${pkgs.pd-mapper}/bin/pd-mapper";
+          ExecStart = "${pd-mapper}/bin/pd-mapper";
           Restart = "always";
         };
       };

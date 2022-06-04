@@ -12,8 +12,8 @@ mobile-nixos.kernel-builder {
   src = fetchFromGitLab {
     owner = "sdm845-mainline";
     repo = "linux";
-    rev = "f7ad1e5036bbb3d919960b54c0b3d51ab51dbf4d";
-    sha256 = "sha256-zYYhBpgzTNhy+DZmnLW6IAR40c8ztFdhLRrwkgsgJ88=";
+    rev = "5e399e72d48a00d02836169b8a78982932de0433";
+    sha256 = "sha256-sD3R6AS6QxuGZ3B4A+2mtnZANifkntkAa53LgGw4PjA=";
   };
 
   patches = [ ./drop-dangerous-android-options.patch ];
